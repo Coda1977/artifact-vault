@@ -7,7 +7,7 @@ import { useState } from 'react';
 interface ArtifactCardProps {
   id: string;
   name: string;
-  category?: { id: string; name: string } | null;
+  category?: { _id: string; name: string } | null;
   slug: string;
   code: string;
   onDelete?: () => void;

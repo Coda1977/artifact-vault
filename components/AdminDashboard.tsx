@@ -12,10 +12,10 @@ import { Id } from '@/convex/_generated/dataModel';
 export function AdminDashboard() {
   const [showCreateArtifact, setShowCreateArtifact] = useState(false);
   const [showCreateCategory, setShowCreateCategory] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<Id<"categories"> | undefined>(undefined);
 
   const artifacts = useQuery(api.artifacts.listArtifacts, {
-    categoryId: selectedCategory || undefined,
+    categoryId: selectedCategory,
   });
   const categories = useQuery(api.categories.listCategories);
   const deleteArtifact = useMutation(api.artifacts.deleteArtifact);
@@ -97,8 +97,8 @@ export function AdminDashboard() {
           </label>
           <select
             id="category-filter"
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
+            value={selectedCategory || ''}
+            onChange={(e) => setSelectedCategory(e.target.value ? e.target.value as Id<"categories"> : undefined)}
             className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FFD60A] focus:border-transparent bg-white"
           >
             <option value="">All Categories</option>
