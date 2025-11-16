@@ -2,17 +2,18 @@
 
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { notFound } from 'next/navigation';
+import { use } from 'react';
 
 interface ArtifactPageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export default function ArtifactPage({ params }: ArtifactPageProps) {
+  const { slug } = use(params);
   const artifact = useQuery(api.artifacts.getArtifactBySlug, {
-    slug: params.slug,
+    slug,
   });
 
   if (artifact === undefined) {
