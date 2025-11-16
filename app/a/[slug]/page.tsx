@@ -28,7 +28,7 @@ export default function ArtifactPage({ params }: ArtifactPageProps) {
       <div className="min-h-screen bg-[#F5F0E8] flex items-center justify-center">
         <div className="bg-white p-12 rounded-2xl shadow-xl max-w-md w-full text-center">
           <h1 className="text-3xl font-black text-[#1A1A1A] mb-4">Artifact Not Found</h1>
-          <p className="text-[#4A4A4A]">The artifact you're looking for doesn't exist.</p>
+          <p className="text-[#4A4A4A]">The artifact you&apos;re looking for doesn&apos;t exist.</p>
         </div>
       </div>
     );
