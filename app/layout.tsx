@@ -1,13 +1,13 @@
-'use client';
-
-import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import { ConvexProvider, ConvexReactClient } from 'convex/react'
+import { ConvexClientProvider } from './ConvexClientProvider'
 
 const inter = Inter({ subsets: ['latin'] })
 
-const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+export const metadata = {
+  title: 'Artifact Vault',
+  description: 'Private repository for Claude artifacts',
+}
 
 export default function RootLayout({
   children,
@@ -17,9 +17,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ConvexProvider client={convex}>
+        <ConvexClientProvider>
           {children}
-        </ConvexProvider>
+        </ConvexClientProvider>
       </body>
     </html>
   )

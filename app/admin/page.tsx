@@ -1,8 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AdminDashboard } from '@/components/AdminDashboard';
-import { useRouter } from 'next/navigation';
 
 const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'admin123';
 
@@ -10,24 +9,24 @@ export default function AdminPage() {
   const [password, setPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [error, setError] = useState('');
-  const router = useRouter();
+
+  // Check if already authenticated
+  useEffect(() => {
+    if (typeof window !== 'undefined' && localStorage.getItem('adminAuthenticated') === 'true') {
+      setIsAuthenticated(true);
+    }
+  }, []);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (password === ADMIN_PASSWORD) {
       setIsAuthenticated(true);
       localStorage.setItem('adminAuthenticated', 'true');
+      setError('');
     } else {
       setError('Incorrect password');
     }
   };
-
-  // Check if already authenticated
-  useState(() => {
-    if (typeof window !== 'undefined' && localStorage.getItem('adminAuthenticated') === 'true') {
-      setIsAuthenticated(true);
-    }
-  });
 
   if (isAuthenticated) {
     return <AdminDashboard />;
