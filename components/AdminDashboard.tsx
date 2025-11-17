@@ -40,37 +40,38 @@ export function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F5F0E8] py-12 px-5 md:px-10">
-      <div className="max-w-6xl mx-auto">
-        <header className="mb-12">
-          <h1 className="text-5xl md:text-6xl font-black text-[#1A1A1A] mb-4 tracking-tight">
+    <div className="min-h-screen bg-[#F5F0E8] py-8 md:py-12 px-4 md:px-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Header Card */}
+        <div className="bg-white rounded-3xl p-8 md:p-12 mb-8 shadow-lg">
+          <h1 className="text-4xl md:text-6xl font-black text-[#1A1A1A] mb-3 tracking-tight">
             Artifact Vault
           </h1>
-          <p className="text-xl text-[#4A4A4A] max-w-2xl">
+          <p className="text-lg md:text-xl text-[#4A4A4A] max-w-2xl">
             Manage your Claude artifacts with ease. Create, organize, and share code blocks securely.
           </p>
-        </header>
+          
+          <div className="flex flex-wrap gap-3 mt-8">
+            <button
+              onClick={() => {
+                setShowCreateArtifact(!showCreateArtifact);
+                setShowCreateCategory(false);
+              }}
+              className="bg-[#1A1A1A] text-[#F5F0E8] px-8 py-3 rounded-full font-semibold hover:-translate-y-1 hover:shadow-xl transition-all duration-300"
+            >
+              {showCreateArtifact ? '✕ Close' : '+ Create Artifact'}
+            </button>
 
-        <div className="flex flex-wrap gap-4 mb-8">
-          <button
-            onClick={() => {
-              setShowCreateArtifact(!showCreateArtifact);
-              setShowCreateCategory(false);
-            }}
-            className="bg-[#1A1A1A] text-[#F5F0E8] px-8 py-3 rounded-full font-semibold hover:-translate-y-0.5 hover:shadow-lg transition-all duration-300"
-          >
-            {showCreateArtifact ? 'Close Form' : 'Create Artifact'}
-          </button>
-
-          <button
-            onClick={() => {
-              setShowCreateCategory(!showCreateCategory);
-              setShowCreateArtifact(false);
-            }}
-            className="bg-[#003566] text-white px-8 py-3 rounded-full font-semibold hover:-translate-y-0.5 hover:shadow-lg transition-all duration-300"
-          >
-            {showCreateCategory ? 'Close Form' : 'Create Category'}
-          </button>
+            <button
+              onClick={() => {
+                setShowCreateCategory(!showCreateCategory);
+                setShowCreateArtifact(false);
+              }}
+              className="bg-[#003566] text-white px-8 py-3 rounded-full font-semibold hover:-translate-y-1 hover:shadow-xl transition-all duration-300"
+            >
+              {showCreateCategory ? '✕ Close' : '+ Create Category'}
+            </button>
+          </div>
         </div>
 
         {showCreateArtifact && (
@@ -91,43 +92,50 @@ export function AdminDashboard() {
           </div>
         )}
 
-        <div className="mb-8">
-          <label htmlFor="category-filter" className="block text-sm font-semibold text-[#1A1A1A] mb-2">
-            Filter by Category
-          </label>
-          <select
-            id="category-filter"
-            value={selectedCategory || ''}
-            onChange={(e) => setSelectedCategory(e.target.value ? e.target.value as Id<"categories"> : undefined)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FFD60A] focus:border-transparent bg-white"
-          >
-            <option value="">All Categories</option>
-            {categories.map((category) => (
-              <option key={category._id} value={category._id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
+        {/* Filter Card */}
+        <div className="bg-white rounded-3xl p-6 md:p-8 mb-8 shadow-lg">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="flex-1">
+              <label htmlFor="category-filter" className="block text-sm font-bold text-[#1A1A1A] mb-3">
+                Filter by Category
+              </label>
+              <select
+                id="category-filter"
+                value={selectedCategory || ''}
+                onChange={(e) => setSelectedCategory(e.target.value ? e.target.value as Id<"categories"> : undefined)}
+                className="w-full md:w-auto px-6 py-3 border-2 border-gray-200 rounded-full focus:ring-2 focus:ring-[#FFD60A] focus:border-[#FFD60A] bg-white font-semibold text-[#1A1A1A] transition-all"
+              >
+                <option value="">All Categories</option>
+                {categories.map((category) => (
+                  <option key={category._id} value={category._id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <div className="bg-[#FFD60A] text-[#1A1A1A] px-6 py-3 rounded-full font-bold text-lg">
+                {artifacts.length} {artifacts.length !== 1 ? 'Artifacts' : 'Artifact'}
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="mb-4">
-          <p className="text-[#4A4A4A]">
-            {artifacts.length} artifact{artifacts.length !== 1 ? 's' : ''} found
-          </p>
-        </div>
-
-        <div className="space-y-8">
+        {/* Artifacts Grid */}
+        <div className="grid gap-6 md:gap-8">
           {artifacts.length === 0 ? (
-            <div className="bg-white p-12 rounded-2xl text-center">
-              <h3 className="text-2xl font-bold text-[#1A1A1A] mb-4">No artifacts yet</h3>
-              <p className="text-[#4A4A4A] mb-6">
-                Create your first artifact to get started!
+            <div className="bg-white p-16 rounded-3xl text-center shadow-lg">
+              <div className="text-6xl mb-6">📦</div>
+              <h3 className="text-3xl font-black text-[#1A1A1A] mb-4">No artifacts yet</h3>
+              <p className="text-lg text-[#4A4A4A] mb-8 max-w-md mx-auto">
+                Create your first artifact to get started! Store your Claude-generated code blocks here.
               </p>
               <button
                 onClick={() => setShowCreateArtifact(true)}
-                className="bg-[#FFD60A] text-[#1A1A1A] px-8 py-3 rounded-full font-semibold hover:-translate-y-0.5 hover:shadow-lg transition-all duration-300"
+                className="bg-[#FFD60A] text-[#1A1A1A] px-10 py-4 rounded-full font-bold text-lg hover:-translate-y-1 hover:shadow-xl transition-all duration-300"
               >
-                Create First Artifact
+                + Create First Artifact
               </button>
             </div>
           ) : (
