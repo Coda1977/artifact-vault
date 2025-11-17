@@ -44,34 +44,44 @@ export function CreateArtifactForm({ onSuccess, onCancel }: CreateArtifactFormPr
   };
 
   return (
-    <div className="bg-white p-8 rounded-2xl shadow-lg max-w-2xl mx-auto">
-      <h2 className="text-3xl font-bold mb-6 text-[#1A1A1A]">Create New Artifact</h2>
-      
+    <div className="bg-white/90 backdrop-blur-md p-8 sm:p-10 rounded-3xl shadow-2xl max-w-3xl mx-auto border-2 border-white/50 relative overflow-hidden">
+      {/* Decorative gradient border */}
+      <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#FFD60A] via-[#FFC700] to-[#FFD60A]"></div>
+
+      <div className="flex items-center space-x-3 mb-8">
+        <div className="w-12 h-12 bg-gradient-to-br from-[#FFD60A] to-[#FFC700] rounded-xl flex items-center justify-center shadow-lg">
+          <span className="text-2xl">✨</span>
+        </div>
+        <h2 className="text-3xl sm:text-4xl font-black text-[#1A1A1A]">Create New Artifact</h2>
+      </div>
+
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label htmlFor="name" className="block text-sm font-semibold text-[#1A1A1A] mb-2">
-            Name *
+          <label htmlFor="name" className="block text-sm font-bold text-[#1A1A1A] mb-2.5 flex items-center space-x-2">
+            <span>📝</span>
+            <span>Artifact Name *</span>
           </label>
           <input
             id="name"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FFD60A] focus:border-transparent"
+            className="w-full px-5 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#FFD60A] focus:border-[#FFD60A] transition-all shadow-sm hover:border-gray-300 text-[#1A1A1A] font-medium text-lg"
             placeholder="My Awesome Component"
             required
           />
         </div>
 
         <div>
-          <label htmlFor="category" className="block text-sm font-semibold text-[#1A1A1A] mb-2">
-            Category
+          <label htmlFor="category" className="block text-sm font-bold text-[#1A1A1A] mb-2.5 flex items-center space-x-2">
+            <span>📂</span>
+            <span>Category</span>
           </label>
           <select
             id="category"
             value={categoryId}
             onChange={(e) => setCategoryId(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FFD60A] focus:border-transparent"
+            className="w-full px-5 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#FFD60A] focus:border-[#FFD60A] transition-all shadow-sm hover:border-gray-300 text-[#1A1A1A] font-medium appearance-none"
           >
             <option value="">No Category</option>
             {categories?.map((category) => (
@@ -83,35 +93,37 @@ export function CreateArtifactForm({ onSuccess, onCancel }: CreateArtifactFormPr
         </div>
 
         <div>
-          <label htmlFor="code" className="block text-sm font-semibold text-[#1A1A1A] mb-2">
-            Code *
+          <label htmlFor="code" className="block text-sm font-bold text-[#1A1A1A] mb-2.5 flex items-center space-x-2">
+            <span>💻</span>
+            <span>Code *</span>
           </label>
           <textarea
             id="code"
             value={code}
             onChange={(e) => setCode(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FFD60A] focus:border-transparent h-64 font-mono text-sm"
+            className="w-full px-5 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#FFD60A] focus:border-[#FFD60A] transition-all shadow-sm hover:border-gray-300 h-72 font-mono text-sm text-[#1A1A1A] resize-y"
             placeholder="Paste your HTML/CSS/JS code here..."
             required
           />
+          <p className="mt-2 text-xs text-[#4A4A4A]">💡 Tip: Paste complete HTML documents with inline CSS and JavaScript</p>
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex gap-4 pt-4">
           <button
             type="submit"
             disabled={isSubmitting}
-            className="bg-[#1A1A1A] text-[#F5F0E8] px-8 py-3 rounded-full font-semibold hover:-translate-y-0.5 hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-gradient-to-r from-[#FFD60A] to-[#FFC700] text-[#1A1A1A] px-10 py-4 rounded-xl font-bold hover:shadow-2xl hover:scale-105 active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-lg text-lg border-2 border-[#FFD60A]/30"
           >
-            {isSubmitting ? 'Creating...' : 'Create Artifact'}
+            {isSubmitting ? '⏳ Creating...' : '✨ Create Artifact'}
           </button>
-          
+
           {onCancel && (
             <button
               type="button"
               onClick={onCancel}
-              className="bg-gray-300 text-[#1A1A1A] px-8 py-3 rounded-full font-semibold hover:bg-gray-400 transition-colors"
+              className="bg-gray-200 text-[#1A1A1A] px-10 py-4 rounded-xl font-bold hover:bg-gray-300 hover:shadow-lg transition-all"
             >
-              Cancel
+              ✕ Cancel
             </button>
           )}
         </div>

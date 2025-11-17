@@ -33,8 +33,11 @@ export function AdminDashboard() {
 
   if (!artifacts || !categories) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-[#FDFCFB]">
-        <div className="text-sm text-gray-500">Loading...</div>
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-[#F5F0E8] to-[#E8DFD0]">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="w-16 h-16 border-4 border-[#FFD60A] border-t-transparent rounded-full animate-spin"></div>
+          <div className="text-lg font-medium text-[#1A1A1A]">Loading your artifacts...</div>
+        </div>
       </div>
     );
   }
@@ -50,33 +53,41 @@ export function AdminDashboard() {
   }, {} as Record<string, typeof artifacts>);
 
   return (
-    <div className="bg-[#FDFCFB] dark:bg-[#111827] text-gray-900 dark:text-gray-100 transition-colors duration-300 min-h-screen">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+    <div className="bg-gradient-to-br from-[#F5F0E8] to-[#E8DFD0] min-h-screen">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* Header */}
-        <header className="mb-12">
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 dark:text-white">
-            Artifact Vault
-          </h1>
-          <p className="mt-2 text-lg text-gray-600 dark:text-gray-400">
-            Welcome, Yonatan
-          </p>
+        <header className="mb-10 sm:mb-14">
+          <div className="flex items-center space-x-3 mb-3">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-[#FFD60A] to-[#FFC700] rounded-xl flex items-center justify-center shadow-lg">
+              <span className="text-2xl sm:text-3xl">🏛️</span>
+            </div>
+            <div>
+              <h1 className="text-3xl sm:text-5xl font-black text-[#1A1A1A] tracking-tight">
+                Artifact Vault
+              </h1>
+              <p className="text-sm sm:text-base text-[#4A4A4A] font-medium mt-0.5">
+                Your Claude Code Collection
+              </p>
+            </div>
+          </div>
         </header>
 
         {/* Filter and Actions Section */}
-        <section className="mb-12 p-6 rounded-lg bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700">
-          <div className="flex flex-wrap items-center justify-between gap-6">
-            <div className="flex-grow min-w-[200px]">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" htmlFor="category-filter">
-                Filter by Category
-              </label>
-              <div className="relative">
+        <section className="mb-8 sm:mb-12 bg-white/80 backdrop-blur-md rounded-2xl shadow-xl border border-white/50 overflow-hidden">
+          <div className="p-6 sm:p-8">
+            <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+              {/* Category Filter */}
+              <div className="flex-grow max-w-md">
+                <label className="block text-sm font-bold text-[#1A1A1A] mb-2.5" htmlFor="category-filter">
+                  📁 Filter by Category
+                </label>
                 <select
-                  className="w-full appearance-none rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                  className="w-full appearance-none rounded-xl border-2 border-gray-200 bg-white text-[#1A1A1A] py-3 pl-4 pr-10 focus:outline-none focus:ring-2 focus:ring-[#FFD60A] focus:border-[#FFD60A] transition-all shadow-sm hover:border-gray-300 font-medium"
                   id="category-filter"
                   value={selectedCategory || ''}
                   onChange={(e) => setSelectedCategory(e.target.value ? e.target.value as Id<"categories"> : undefined)}
                 >
-                  <option value="">All Components</option>
+                  <option value="">✨ All Categories</option>
                   {categories.map((category) => (
                     <option key={category._id} value={category._id}>
                       {category.name}
@@ -84,26 +95,28 @@ export function AdminDashboard() {
                   ))}
                 </select>
               </div>
-            </div>
-            <div className="flex items-center gap-4 flex-wrap">
-              <button
-                onClick={() => {
-                  setShowCreateArtifact(!showCreateArtifact);
-                  setShowCreateCategory(false);
-                }}
-                className="bg-[#FBBF24] text-black font-bold py-2 px-6 rounded-full hover:opacity-90 transition-opacity shadow-sm"
-              >
-                Create Artifact
-              </button>
-              <button
-                onClick={() => {
-                  setShowCreateCategory(!showCreateCategory);
-                  setShowCreateArtifact(false);
-                }}
-                className="bg-blue-600 text-white font-bold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors shadow-sm"
-              >
-                Create Category
-              </button>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-3 flex-wrap">
+                <button
+                  onClick={() => {
+                    setShowCreateArtifact(!showCreateArtifact);
+                    setShowCreateCategory(false);
+                  }}
+                  className="bg-gradient-to-r from-[#FFD60A] to-[#FFC700] text-[#1A1A1A] font-bold py-3 px-8 rounded-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all duration-200 shadow-lg border-2 border-[#FFD60A]/30"
+                >
+                  ✨ Create Artifact
+                </button>
+                <button
+                  onClick={() => {
+                    setShowCreateCategory(!showCreateCategory);
+                    setShowCreateArtifact(false);
+                  }}
+                  className="bg-gradient-to-r from-[#003566] to-[#002447] text-white font-bold py-3 px-8 rounded-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all duration-200 shadow-lg"
+                >
+                  📂 New Category
+                </button>
+              </div>
             </div>
           </div>
         </section>
@@ -128,28 +141,37 @@ export function AdminDashboard() {
         )}
 
         {/* Artifacts by Category */}
-        <main className="space-y-16">
+        <main className="space-y-12">
           {artifacts.length === 0 ? (
-            <div className="text-center py-20">
-              <div className="text-6xl mb-4">📦</div>
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">No artifacts yet</h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Create your first artifact to get started
-              </p>
-              <button
-                onClick={() => setShowCreateArtifact(true)}
-                className="bg-[#FBBF24] text-black font-bold py-2 px-6 rounded-full hover:opacity-90 transition-opacity shadow-sm"
-              >
-                Create First Artifact
-              </button>
+            <div className="text-center py-20 sm:py-32">
+              <div className="bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl border border-white/50 max-w-2xl mx-auto p-12 sm:p-16">
+                <div className="text-8xl mb-6 animate-bounce">📦</div>
+                <h3 className="text-3xl sm:text-4xl font-black text-[#1A1A1A] mb-4">
+                  Your Vault is Empty
+                </h3>
+                <p className="text-lg text-[#4A4A4A] mb-8 leading-relaxed">
+                  Start building your collection by creating your first artifact.<br />
+                  Store and share your Claude Code creations!
+                </p>
+                <button
+                  onClick={() => setShowCreateArtifact(true)}
+                  className="bg-gradient-to-r from-[#FFD60A] to-[#FFC700] text-[#1A1A1A] font-bold py-4 px-10 rounded-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all duration-200 shadow-lg text-lg border-2 border-[#FFD60A]/30"
+                >
+                  ✨ Create Your First Artifact
+                </button>
+              </div>
             </div>
           ) : (
             Object.entries(groupedArtifacts).map(([categoryName, categoryArtifacts]) => (
               <section key={categoryName}>
-                <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">
-                  {categoryName}
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="w-2 h-8 bg-gradient-to-b from-[#FFD60A] to-[#FFC700] rounded-full"></div>
+                  <h2 className="text-2xl sm:text-3xl font-black text-[#1A1A1A]">
+                    {categoryName}
+                  </h2>
+                  <div className="flex-grow h-0.5 bg-gradient-to-r from-gray-300 to-transparent"></div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                   {categoryArtifacts.map((artifact) => (
                     <ArtifactCard
                       key={artifact._id}
