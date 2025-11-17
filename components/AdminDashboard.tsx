@@ -33,35 +33,35 @@ export function AdminDashboard() {
 
   if (!artifacts || !categories) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-[#F5F0E8]">
-        <div className="text-2xl font-bold text-[#1A1A1A]">Loading...</div>
+      <div className="flex items-center justify-center min-h-screen bg-white">
+        <div className="text-sm text-gray-500">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#F5F0E8]">
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        {/* Simple Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl md:text-5xl font-black text-[#1A1A1A] mb-2">
+    <div className="min-h-screen bg-white">
+      <div className="max-w-5xl mx-auto px-6 py-12">
+        {/* Notion-style Header */}
+        <div className="mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
             Artifact Vault
           </h1>
-          <p className="text-lg text-[#4A4A4A]">
+          <p className="text-base text-gray-500">
             Manage your Claude artifacts
           </p>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex gap-3 mb-8">
+        {/* Notion-style Action Bar */}
+        <div className="flex items-center gap-2 mb-6">
           <button
             onClick={() => {
               setShowCreateArtifact(!showCreateArtifact);
               setShowCreateCategory(false);
             }}
-            className="bg-[#1A1A1A] text-white px-6 py-3 rounded-xl font-semibold hover:bg-[#2A2A2A] transition-colors"
+            className="px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded transition-colors"
           >
-            {showCreateArtifact ? 'Cancel' : '+ New Artifact'}
+            + New
           </button>
 
           <button
@@ -69,15 +69,34 @@ export function AdminDashboard() {
               setShowCreateCategory(!showCreateCategory);
               setShowCreateArtifact(false);
             }}
-            className="bg-[#003566] text-white px-6 py-3 rounded-xl font-semibold hover:bg-[#004477] transition-colors"
+            className="px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded transition-colors"
           >
-            {showCreateCategory ? 'Cancel' : '+ New Category'}
+            + Category
           </button>
+
+          <div className="ml-auto flex items-center gap-2">
+            <select
+              value={selectedCategory || ''}
+              onChange={(e) => setSelectedCategory(e.target.value ? e.target.value as Id<"categories"> : undefined)}
+              className="px-3 py-1.5 text-sm text-gray-700 border border-gray-200 rounded hover:bg-gray-50 transition-colors"
+            >
+              <option value="">All</option>
+              {categories.map((category) => (
+                <option key={category._id} value={category._id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+            
+            <span className="text-sm text-gray-500">
+              {artifacts.length} {artifacts.length === 1 ? 'item' : 'items'}
+            </span>
+          </div>
         </div>
 
         {/* Forms */}
         {showCreateArtifact && (
-          <div className="mb-8">
+          <div className="mb-6">
             <CreateArtifactForm
               onSuccess={() => setShowCreateArtifact(false)}
               onCancel={() => setShowCreateArtifact(false)}
@@ -86,7 +105,7 @@ export function AdminDashboard() {
         )}
 
         {showCreateCategory && (
-          <div className="mb-8">
+          <div className="mb-6">
             <CreateCategoryForm
               onSuccess={() => setShowCreateCategory(false)}
               onCancel={() => setShowCreateCategory(false)}
@@ -94,46 +113,16 @@ export function AdminDashboard() {
           </div>
         )}
 
-        {/* Filter and Count */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-          <div>
-            <label htmlFor="category-filter" className="block text-sm font-semibold text-[#1A1A1A] mb-2">
-              Filter
-            </label>
-            <select
-              id="category-filter"
-              value={selectedCategory || ''}
-              onChange={(e) => setSelectedCategory(e.target.value ? e.target.value as Id<"categories"> : undefined)}
-              className="px-4 py-2 border border-gray-300 rounded-lg bg-white font-medium"
-            >
-              <option value="">All Categories</option>
-              {categories.map((category) => (
-                <option key={category._id} value={category._id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          
-          <div className="text-sm text-[#4A4A4A]">
-            {artifacts.length} {artifacts.length === 1 ? 'artifact' : 'artifacts'}
-          </div>
-        </div>
-
-        {/* Artifacts List */}
-        <div className="space-y-6">
+        {/* Notion-style Cards List */}
+        <div className="space-y-2">
           {artifacts.length === 0 ? (
-            <div className="bg-white p-12 rounded-2xl text-center">
-              <div className="text-5xl mb-4">📦</div>
-              <h3 className="text-2xl font-bold text-[#1A1A1A] mb-2">No artifacts yet</h3>
-              <p className="text-[#4A4A4A] mb-6">
-                Create your first artifact to get started
-              </p>
+            <div className="text-center py-20">
+              <p className="text-sm text-gray-400 mb-4">No artifacts yet</p>
               <button
                 onClick={() => setShowCreateArtifact(true)}
-                className="bg-[#FFD60A] text-[#1A1A1A] px-8 py-3 rounded-xl font-semibold hover:bg-[#FFC700] transition-colors"
+                className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded transition-colors"
               >
-                Create First Artifact
+                Create your first artifact
               </button>
             </div>
           ) : (
