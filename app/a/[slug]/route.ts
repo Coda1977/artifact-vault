@@ -19,36 +19,19 @@ export async function GET(
   // Inject mobile viewport fix for artifacts that use 100vh
   const mobileViewportFix = `
 <script>
-// Fix for mobile browsers - set actual viewport height
+// Fix for mobile browsers - set actual viewport height (runs once on load)
 (function() {
-  function setVH() {
-    let vh = window.innerHeight * 0.01;
-    document.documentElement.style.setProperty('--vh', vh + 'px');
-  }
-  
-  // Set initial value without triggering scroll
-  setVH();
-  
-  // Update on resize/orientation change, preserving scroll position
-  window.addEventListener('resize', function() {
-    const scrollPos = window.pageYOffset || document.documentElement.scrollTop;
-    setVH();
-    window.scrollTo(0, scrollPos);
-  });
-  
-  window.addEventListener('orientationchange', function() {
-    const scrollPos = window.pageYOffset || document.documentElement.scrollTop;
-    setVH();
-    window.scrollTo(0, scrollPos);
-  });
+  // Only set on initial load, don't update on resize to avoid scroll issues
+  let vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty('--vh', vh + 'px');
 })();
 </script>
 <style>
-/* Fallback for browsers that support dvh */
+/* Use dvh (dynamic viewport height) for modern browsers */
 .container {
   height: 100dvh !important;
 }
-/* For browsers that don't support dvh, use CSS variable */
+/* Fallback for older browsers using CSS variable */
 @supports not (height: 100dvh) {
   .container {
     height: calc(var(--vh, 1vh) * 100) !important;
