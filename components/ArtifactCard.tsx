@@ -19,42 +19,35 @@ export function ArtifactCard({ id, name, category, slug, code, onDelete }: Artif
   };
 
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow relative">
-      {/* Delete button - top right, shows on hover */}
+    <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm border border-gray-200 dark:border-gray-700 flex flex-col transition-all hover:shadow-lg hover:-translate-y-1 relative group">
+      {/* Delete button - shows on hover */}
       {onDelete && (
         <button
           onClick={onDelete}
-          className="absolute top-3 right-3 opacity-0 hover:opacity-100 group-hover:opacity-100 text-gray-400 hover:text-red-600 transition-opacity text-xs"
+          className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-600 transition-opacity text-sm"
           title="Delete artifact"
         >
           ✕
         </button>
       )}
 
-      {/* Artifact Title */}
-      <h3 className="text-base font-bold text-gray-900 mb-1">
-        {name}
-      </h3>
-
-      {/* Category */}
-      <p className="text-sm text-gray-500 mb-3">
-        {category ? `Category ${category.name}` : 'Uncategorized'}
-      </p>
-
-      {/* Slug */}
-      <p className="text-xs text-gray-400 mb-4 font-mono">
-        Slug: /{slug}
-      </p>
-
-      {/* QR Code - centered */}
-      <div className="flex justify-center mb-4">
-        <QRCodeDisplay url={shareUrl} size={90} />
+      <div className="flex-grow">
+        <h3 className="text-xl font-bold mb-1 text-gray-900 dark:text-white">{name}</h3>
+        <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">
+          {category ? `Category ${category.name}` : 'Categray Cored files'}
+        </p>
+        <div className="flex items-start justify-between gap-4">
+          <div className="text-sm space-y-1 text-gray-600 dark:text-gray-300">
+            <p className="break-all">Slug:/{slug}</p>
+          </div>
+          <div className="flex-shrink-0">
+            <QRCodeDisplay url={shareUrl} size={64} />
+          </div>
+        </div>
       </div>
-
-      {/* Copy URL Button */}
-      <button
+      <button 
         onClick={handleCopyURL}
-        className="w-full px-4 py-2.5 bg-[#1E88E5] text-white rounded-lg font-medium hover:bg-[#1976D2] transition-colors text-sm"
+        className="mt-6 w-full bg-blue-600 text-white font-semibold py-2.5 px-4 rounded-full hover:bg-blue-700 transition-colors"
       >
         Copy URL
       </button>
