@@ -25,9 +25,22 @@ export async function GET(
     let vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty('--vh', vh + 'px');
   }
+  
+  // Set initial value without triggering scroll
   setVH();
-  window.addEventListener('resize', setVH);
-  window.addEventListener('orientationchange', setVH);
+  
+  // Update on resize/orientation change, preserving scroll position
+  window.addEventListener('resize', function() {
+    const scrollPos = window.pageYOffset || document.documentElement.scrollTop;
+    setVH();
+    window.scrollTo(0, scrollPos);
+  });
+  
+  window.addEventListener('orientationchange', function() {
+    const scrollPos = window.pageYOffset || document.documentElement.scrollTop;
+    setVH();
+    window.scrollTo(0, scrollPos);
+  });
 })();
 </script>
 <style>
