@@ -15,17 +15,17 @@ function generateSlug(name: string): string {
 async function ensureUniqueSlug(ctx: QueryCtx | MutationCtx, baseSlug: string): Promise<string> {
   let slug = baseSlug;
   let counter = 1;
-  
+
   while (true) {
     const existing = await ctx.db
       .query("artifacts")
       .withIndex("by_slug", (q) => q.eq("slug", slug))
       .first();
-    
+
     if (!existing) {
       return slug;
     }
-    
+
     slug = `${baseSlug}-${counter}`;
     counter++;
   }
@@ -37,7 +37,7 @@ export const listArtifacts = query({
   },
   handler: async (ctx: QueryCtx, args) => {
     let artifacts;
-    
+
     if (args.categoryId) {
       artifacts = await ctx.db
         .query("artifacts")
@@ -46,11 +46,11 @@ export const listArtifacts = query({
     } else {
       artifacts = await ctx.db.query("artifacts").collect();
     }
-    
+
     // Fetch categories for the artifacts
     const categories = await ctx.db.query("categories").collect();
     const categoryMap = new Map(categories.map(c => [c._id, c]));
-    
+
     return artifacts.map(artifact => ({
       ...artifact,
       category: artifact.categoryId ? categoryMap.get(artifact.categoryId) : null,
@@ -77,15 +77,15 @@ export const getArtifactBySlug = query({
       .query("artifacts")
       .withIndex("by_slug", (q) => q.eq("slug", args.slug))
       .first();
-    
+
     if (!artifact) {
       return null;
     }
-    
-    const category = artifact.categoryId 
+
+    const category = artifact.categoryId
       ? await ctx.db.get(artifact.categoryId)
       : null;
-    
+
     return {
       ...artifact,
       category,
@@ -102,15 +102,41 @@ export const createArtifact = mutation({
   handler: async (ctx: MutationCtx, args) => {
     const baseSlug = generateSlug(args.name);
     const slug = await ensureUniqueSlug(ctx, baseSlug);
-    
+
     const artifactId = await ctx.db.insert("artifacts", {
       name: args.name,
       categoryId: args.categoryId,
       slug,
       code: args.code,
     });
-    
+
     const artifact = await ctx.db.get(artifactId);
     return artifact;
+  },
+});
+
+export const updateArtifact = mutation({
+  args: {
+    artifactId: v.id("artifacts"),
+    name: v.string(),
+    categoryId: v.optional(v.id("categories")),
+    code: v.string(),
+  },
+  handler: async (ctx: MutationCtx, args) => {
+    const existing = await ctx.db.get(args.artifactId);
+    if (!existing) {
+      throw new Error("Artifact not found");
+    }
+
+    // If name changed, we might want to update slug, but usually slugs are permanent.
+    // Let's keep slug permanent for now to avoid breaking links.
+
+    await ctx.db.patch(args.artifactId, {
+      name: args.name,
+      categoryId: args.categoryId,
+      code: args.code,
+    });
+
+    return await ctx.db.get(args.artifactId);
   },
 });

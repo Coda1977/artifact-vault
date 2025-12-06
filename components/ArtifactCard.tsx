@@ -9,9 +9,10 @@ interface ArtifactCardProps {
   slug: string;
   code: string;
   onDelete?: () => void;
+  onEdit?: () => void;
 }
 
-export function ArtifactCard({ id, name, category, slug, code, onDelete }: ArtifactCardProps) {
+export function ArtifactCard({ id, name, category, slug, code, onDelete, onEdit }: ArtifactCardProps) {
   const shareUrl = `${window.location.origin}/a/${slug}`;
 
   const handleCopyURL = () => {
@@ -23,16 +24,27 @@ export function ArtifactCard({ id, name, category, slug, code, onDelete }: Artif
       {/* Decorative gradient background */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#FFD60A] via-[#FFC700] to-[#FFD60A]"></div>
 
-      {/* Delete button - shows on hover */}
-      {onDelete && (
-        <button
-          onClick={onDelete}
-          className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center transition-all shadow-lg hover:scale-110 z-10"
-          title="Delete artifact"
-        >
-          ✕
-        </button>
-      )}
+      {/* Action buttons - show on hover */}
+      <div className="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-all z-10">
+        {onEdit && (
+          <button
+            onClick={onEdit}
+            className="bg-blue-500 hover:bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center transition-all shadow-lg hover:scale-110"
+            title="Edit artifact"
+          >
+            ✏️
+          </button>
+        )}
+        {onDelete && (
+          <button
+            onClick={onDelete}
+            className="bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center transition-all shadow-lg hover:scale-110"
+            title="Delete artifact"
+          >
+            ✕
+          </button>
+        )}
+      </div>
 
       <div className="flex-grow space-y-5">
         {/* Header */}

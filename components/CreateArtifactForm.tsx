@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useMutation, useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
@@ -8,16 +8,32 @@ import { Id } from '@/convex/_generated/dataModel';
 interface CreateArtifactFormProps {
   onSuccess?: () => void;
   onCancel?: () => void;
+  initialValues?: {
+    _id: Id<"artifacts">;
+    name: string;
+    categoryId?: string;
+    code: string;
+  };
+  mode?: 'create' | 'edit';
 }
 
-export function CreateArtifactForm({ onSuccess, onCancel }: CreateArtifactFormProps) {
-  const [name, setName] = useState('');
-  const [categoryId, setCategoryId] = useState<string>('');
-  const [code, setCode] = useState('');
+export function CreateArtifactForm({ onSuccess, onCancel, initialValues, mode = 'create' }: CreateArtifactFormProps) {
+  const [name, setName] = useState(initialValues?.name || '');
+  const [categoryId, setCategoryId] = useState<string>(initialValues?.categoryId || '');
+  const [code, setCode] = useState(initialValues?.code || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const createArtifact = useMutation(api.artifacts.createArtifact);
+  const updateArtifact = useMutation(api.artifacts.updateArtifact);
   const categories = useQuery(api.categories.listCategories);
+
+  useEffect(() => {
+    if (initialValues) {
+      setName(initialValues.name);
+      setCategoryId(initialValues.categoryId || '');
+      setCode(initialValues.code);
+    }
+  }, [initialValues]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,19 +41,28 @@ export function CreateArtifactForm({ onSuccess, onCancel }: CreateArtifactFormPr
 
     setIsSubmitting(true);
     try {
-      await createArtifact({
-        name: name.trim(),
-        categoryId: categoryId ? (categoryId as Id<"categories">) : undefined,
-        code: code.trim(),
-      });
-      
+      if (mode === 'edit' && initialValues?._id) {
+        await updateArtifact({
+          artifactId: initialValues._id,
+          name: name.trim(),
+          categoryId: categoryId ? (categoryId as Id<"categories">) : undefined,
+          code: code.trim(),
+        });
+      } else {
+        await createArtifact({
+          name: name.trim(),
+          categoryId: categoryId ? (categoryId as Id<"categories">) : undefined,
+          code: code.trim(),
+        });
+      }
+
       setName('');
       setCategoryId('');
       setCode('');
       onSuccess?.();
     } catch (error) {
-      console.error('Failed to create artifact:', error);
-      alert('Failed to create artifact. Please try again.');
+      console.error(`Failed to ${mode} artifact:`, error);
+      alert(`Failed to ${mode} artifact. Please try again.`);
     } finally {
       setIsSubmitting(false);
     }
@@ -52,7 +77,9 @@ export function CreateArtifactForm({ onSuccess, onCancel }: CreateArtifactFormPr
         <div className="w-12 h-12 bg-gradient-to-br from-[#FFD60A] to-[#FFC700] rounded-xl flex items-center justify-center shadow-lg">
           <span className="text-2xl">✨</span>
         </div>
-        <h2 className="text-3xl sm:text-4xl font-black text-[#1A1A1A]">Create New Artifact</h2>
+        <h2 className="text-3xl sm:text-4xl font-black text-[#1A1A1A]">
+          {mode === 'edit' ? 'Edit Artifact' : 'Create New Artifact'}
+        </h2>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -114,7 +141,7 @@ export function CreateArtifactForm({ onSuccess, onCancel }: CreateArtifactFormPr
             disabled={isSubmitting}
             className="bg-gradient-to-r from-[#FFD60A] to-[#FFC700] text-[#1A1A1A] px-10 py-4 rounded-xl font-bold hover:shadow-2xl hover:scale-105 active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-lg text-lg border-2 border-[#FFD60A]/30"
           >
-            {isSubmitting ? '⏳ Creating...' : '✨ Create Artifact'}
+            {isSubmitting ? (mode === 'edit' ? '⏳ Saving...' : '⏳ Creating...') : (mode === 'edit' ? '💾 Save Changes' : '✨ Create Artifact')}
           </button>
 
           {onCancel && (

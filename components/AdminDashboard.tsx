@@ -17,6 +17,8 @@ export function AdminDashboard() {
   const artifacts = useQuery(api.artifacts.listArtifacts, {
     categoryId: selectedCategory,
   });
+  const [editingArtifact, setEditingArtifact] = useState<typeof artifacts[0] | null>(null);
+
   const categories = useQuery(api.categories.listCategories);
   const deleteArtifact = useMutation(api.artifacts.deleteArtifact);
 
@@ -29,6 +31,12 @@ export function AdminDashboard() {
         alert('Failed to delete artifact. Please try again.');
       }
     }
+  };
+
+  const handleEditArtifact = (artifact: typeof artifacts[0]) => {
+    setEditingArtifact(artifact);
+    setShowCreateArtifact(true);
+    setShowCreateCategory(false);
   };
 
   if (!artifacts || !categories) {
@@ -100,6 +108,7 @@ export function AdminDashboard() {
               <div className="flex items-center gap-3 flex-wrap">
                 <button
                   onClick={() => {
+                    setEditingArtifact(null);
                     setShowCreateArtifact(!showCreateArtifact);
                     setShowCreateCategory(false);
                   }}
@@ -125,8 +134,21 @@ export function AdminDashboard() {
         {showCreateArtifact && (
           <div className="mb-12">
             <CreateArtifactForm
-              onSuccess={() => setShowCreateArtifact(false)}
-              onCancel={() => setShowCreateArtifact(false)}
+              onSuccess={() => {
+                setShowCreateArtifact(false);
+                setEditingArtifact(null);
+              }}
+              onCancel={() => {
+                setShowCreateArtifact(false);
+                setEditingArtifact(null);
+              }}
+              initialValues={editingArtifact ? {
+                _id: editingArtifact._id,
+                name: editingArtifact.name,
+                categoryId: editingArtifact.categoryId,
+                code: editingArtifact.code,
+              } : undefined}
+              mode={editingArtifact ? 'edit' : 'create'}
             />
           </div>
         )}
@@ -154,7 +176,10 @@ export function AdminDashboard() {
                   Store and share your Claude Code creations!
                 </p>
                 <button
-                  onClick={() => setShowCreateArtifact(true)}
+                  onClick={() => {
+                    setEditingArtifact(null);
+                    setShowCreateArtifact(true);
+                  }}
                   className="bg-gradient-to-r from-[#FFD60A] to-[#FFC700] text-[#1A1A1A] font-bold py-4 px-10 rounded-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all duration-200 shadow-lg text-lg border-2 border-[#FFD60A]/30"
                 >
                   ✨ Create Your First Artifact
@@ -181,6 +206,7 @@ export function AdminDashboard() {
                       slug={artifact.slug}
                       code={artifact.code}
                       onDelete={() => handleDeleteArtifact(artifact._id)}
+                      onEdit={() => handleEditArtifact(artifact)}
                     />
                   ))}
                 </div>
