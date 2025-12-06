@@ -33,7 +33,7 @@ export function AdminDashboard() {
     }
   };
 
-  const handleEditArtifact = (artifact: typeof artifacts[0]) => {
+  const handleEditArtifact = (artifact: NonNullable<typeof artifacts>[0]) => {
     setEditingArtifact(artifact);
     setShowCreateArtifact(true);
     setShowCreateCategory(false);
