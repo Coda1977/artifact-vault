@@ -17,7 +17,7 @@ export function AdminDashboard() {
   const artifacts = useQuery(api.artifacts.listArtifacts, {
     categoryId: selectedCategory,
   });
-  const [editingArtifact, setEditingArtifact] = useState<typeof artifacts[0] | null>(null);
+  const [editingArtifact, setEditingArtifact] = useState<NonNullable<typeof artifacts>[0] | null>(null);
 
   const categories = useQuery(api.categories.listCategories);
   const deleteArtifact = useMutation(api.artifacts.deleteArtifact);
