@@ -39,9 +39,16 @@ export function CreateArtifactForm({ onSuccess, onCancel, initialValues, mode = 
     e.preventDefault();
     if (!name.trim() || !code.trim()) return;
 
+    console.log('Submitting artifact form:', { mode, initialValues, name, categoryId, code });
+
     setIsSubmitting(true);
     try {
-      if (mode === 'edit' && initialValues?._id) {
+      if (mode === 'edit') {
+        if (!initialValues?._id) {
+          console.error('Edit mode but no initialValues._id');
+          throw new Error('Missing artifact ID for edit');
+        }
+        console.log('Updating artifact:', initialValues._id);
         await updateArtifact({
           artifactId: initialValues._id,
           name: name.trim(),
@@ -49,6 +56,7 @@ export function CreateArtifactForm({ onSuccess, onCancel, initialValues, mode = 
           code: code.trim(),
         });
       } else {
+        console.log('Creating new artifact');
         await createArtifact({
           name: name.trim(),
           categoryId: categoryId ? (categoryId as Id<"categories">) : undefined,
