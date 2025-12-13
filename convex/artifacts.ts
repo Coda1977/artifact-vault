@@ -125,30 +125,32 @@ export const updateArtifact = mutation({
   },
   handler: async (ctx: MutationCtx, args) => {
     console.log("updateArtifact called with args:", args);
-    const existing = await ctx.db.get(args.artifactId);
-    if (!existing) {
-      throw new ConvexError("Artifact not found");
-    }
-
-    // Prepare patch data
-    // Note: patch ignores undefined values, so checks are largely for clarity/safety
-    const patchData: any = {
-      name: args.name,
-      code: args.code,
-    };
-    if (args.categoryId !== undefined) {
-      patchData.categoryId = args.categoryId;
-    }
-
-    console.log("Applying patch:", patchData);
-
     try {
-      await ctx.db.patch(args.artifactId, patchData);
-    } catch (e: any) {
-      console.error("Failed to patch artifact:", e);
-      throw new ConvexError(`Failed to patch artifact: ${e.message}`);
-    }
+      const existing = await ctx.db.get(args.artifactId);
+      if (!existing) {
+        throw new ConvexError("Artifact not found");
+      }
 
-    return await ctx.db.get(args.artifactId);
+      // Prepare patch data
+      const patchData: any = {
+        name: args.name,
+        code: args.code,
+      };
+      if (args.categoryId !== undefined) {
+        patchData.categoryId = args.categoryId;
+      }
+
+      console.log("Applying patch:", patchData);
+      await ctx.db.patch(args.artifactId, patchData);
+
+      return await ctx.db.get(args.artifactId);
+    } catch (e: any) {
+      console.error("Failed to update artifact:", e);
+      // Ensure it's a ConvexError to be visible to client
+      if (e instanceof ConvexError) {
+        throw e;
+      }
+      throw new ConvexError(`Failed to update artifact: ${e.message || e.toString()}`);
+    }
   },
 });
