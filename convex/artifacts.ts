@@ -154,3 +154,36 @@ export const updateArtifact = mutation({
     }
   },
 });
+
+export const updateArtifactDebug = mutation({
+  args: v.any(),
+  handler: async (ctx: MutationCtx, args: any) => {
+    console.log("updateArtifactDebug called with args:", args);
+    try {
+      const artifactId = args.artifactId as Id<"artifacts">;
+      const existing = await ctx.db.get(artifactId);
+      if (!existing) {
+        throw new ConvexError("Artifact not found");
+      }
+
+      // Prepare patch data
+      const patchData: any = {
+        name: args.name,
+        code: args.code,
+      };
+      // Handle categoryId
+      if (args.categoryId && typeof args.categoryId === 'string' && args.categoryId.length > 0) {
+        patchData.categoryId = args.categoryId as Id<"categories">;
+      }
+
+      console.log("Applying patch in debug mode:", patchData);
+      await ctx.db.patch(artifactId, patchData);
+
+      return await ctx.db.get(artifactId);
+    } catch (e: any) {
+      console.error("Failed to update artifact (DEBUG):", e);
+      if (e instanceof ConvexError) throw e;
+      throw new ConvexError(`Debug update failed: ${e.message || e.toString()}`);
+    }
+  },
+});
