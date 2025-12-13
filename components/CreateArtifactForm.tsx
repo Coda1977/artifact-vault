@@ -49,12 +49,17 @@ export function CreateArtifactForm({ onSuccess, onCancel, initialValues, mode = 
           throw new Error('Missing artifact ID for edit');
         }
         console.log('Updating artifact:', initialValues._id);
-        await updateArtifact({
+
+        const payload = {
           artifactId: initialValues._id,
           name: name.trim(),
           categoryId: categoryId ? (categoryId as Id<"categories">) : undefined,
           code: code.trim(),
-        });
+        };
+        // Alert the payload for debugging
+        alert(`Sending payload: ${JSON.stringify(payload, null, 2)}`);
+
+        await updateArtifact(payload);
       } else {
         console.log('Creating new artifact');
         await createArtifact({
