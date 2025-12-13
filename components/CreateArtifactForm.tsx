@@ -75,7 +75,8 @@ export function CreateArtifactForm({ onSuccess, onCancel, initialValues, mode = 
       onSuccess?.();
     } catch (error: any) {
       console.error(`Failed to ${mode} artifact:`, error);
-      alert(`Failed to ${mode} artifact: ${error.message || 'Unknown error'}`);
+      const errorMessage = error.data || error.message || 'Unknown error';
+      alert(`Failed to ${mode} artifact: ${errorMessage}`);
     } finally {
       setIsSubmitting(false);
     }

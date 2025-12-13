@@ -118,16 +118,15 @@ export const createArtifact = mutation({
 
 export const updateArtifact = mutation({
   args: {
-    artifactId: v.string(), // Was v.id("artifacts"), relaxed for debugging
+    artifactId: v.id("artifacts"),
     name: v.string(),
-    categoryId: v.optional(v.string()), // Was v.optional(v.id("categories")), relaxed for debugging
+    categoryId: v.optional(v.id("categories")),
     code: v.string(),
   },
   handler: async (ctx: MutationCtx, args) => {
     console.log("updateArtifact called with args:", args);
     try {
-      const artifactId = args.artifactId as Id<"artifacts">;
-      const existing = await ctx.db.get(artifactId);
+      const existing = await ctx.db.get(args.artifactId);
       if (!existing) {
         throw new ConvexError("Artifact not found");
       }
@@ -137,27 +136,14 @@ export const updateArtifact = mutation({
         name: args.name,
         code: args.code,
       };
-      if (args.categoryId) {
-        patchData.categoryId = args.categoryId as Id<"categories">;
-      } else if (args.categoryId === "") {
-        // Handle empty string as unset if needed, or ignore
-        // If we want to unset category, we might need to pass explicit null?
-        // For now, assume empty string means undefined/no-change or no-category?
-        // Actually the form sends undefined if empty.
-      }
-
-      // If we received undefined, we don't include it in patchData (handled by existing logic)
-      if (args.categoryId !== undefined && args.categoryId !== "") {
-        patchData.categoryId = args.categoryId as Id<"categories">;
-      } else if (args.categoryId === null) {
-        // If we received null (if schema allowed it), we might want to unset?
-        // v.optional(v.string()) allows undefined, not null.
+      if (args.categoryId !== undefined) {
+        patchData.categoryId = args.categoryId;
       }
 
       console.log("Applying patch:", patchData);
-      await ctx.db.patch(artifactId, patchData);
+      await ctx.db.patch(args.artifactId, patchData);
 
-      return await ctx.db.get(artifactId);
+      return await ctx.db.get(args.artifactId);
     } catch (e: any) {
       console.error("Failed to update artifact:", e);
       // Ensure it's a ConvexError to be visible to client
