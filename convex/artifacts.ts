@@ -123,19 +123,30 @@ export const updateArtifact = mutation({
     code: v.string(),
   },
   handler: async (ctx: MutationCtx, args) => {
+    console.log("updateArtifact called with args:", args);
     const existing = await ctx.db.get(args.artifactId);
     if (!existing) {
       throw new Error("Artifact not found");
     }
 
-    // If name changed, we might want to update slug, but usually slugs are permanent.
-    // Let's keep slug permanent for now to avoid breaking links.
-
-    await ctx.db.patch(args.artifactId, {
+    // Prepare patch data
+    // Note: patch ignores undefined values, so checks are largely for clarity/safety
+    const patchData: any = {
       name: args.name,
-      categoryId: args.categoryId,
       code: args.code,
-    });
+    };
+    if (args.categoryId !== undefined) {
+      patchData.categoryId = args.categoryId;
+    }
+
+    console.log("Applying patch:", patchData);
+
+    try {
+      await ctx.db.patch(args.artifactId, patchData);
+    } catch (e: any) {
+      console.error("Failed to patch artifact:", e);
+      throw new Error(`Failed to patch artifact: ${e.message}`);
+    }
 
     return await ctx.db.get(args.artifactId);
   },
