@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query, QueryCtx, MutationCtx } from "./_generated/server";
 import { Id } from "./_generated/dataModel";
+import { ConvexError } from "convex/values";
 
 // Generate a slug from a name
 function generateSlug(name: string): string {
@@ -126,7 +127,7 @@ export const updateArtifact = mutation({
     console.log("updateArtifact called with args:", args);
     const existing = await ctx.db.get(args.artifactId);
     if (!existing) {
-      throw new Error("Artifact not found");
+      throw new ConvexError("Artifact not found");
     }
 
     // Prepare patch data
@@ -145,7 +146,7 @@ export const updateArtifact = mutation({
       await ctx.db.patch(args.artifactId, patchData);
     } catch (e: any) {
       console.error("Failed to patch artifact:", e);
-      throw new Error(`Failed to patch artifact: ${e.message}`);
+      throw new ConvexError(`Failed to patch artifact: ${e.message}`);
     }
 
     return await ctx.db.get(args.artifactId);
